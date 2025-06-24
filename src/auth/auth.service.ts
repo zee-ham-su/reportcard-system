@@ -4,13 +4,17 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcryptjs';
 import { User, UserDocument } from '../users/schemas/user.schema';
+import { Teacher, TeacherDocument } from '../teachers/schemas/teacher.schema';
+import { Student, StudentDocument } from '../students/schemas/student.schema';
 import { CreateUserDto, LoginDto } from './dto/auth.dto';
-import { JwtPayload } from '../common';
+import { JwtPayload, UserRole } from '../common';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectModel(User.name) private userModel: Model<UserDocument>,
+    @InjectModel(Teacher.name) private teacherModel: Model<TeacherDocument>,
+    @InjectModel(Student.name) private studentModel: Model<StudentDocument>,
     private jwtService: JwtService,
   ) {}
 
@@ -34,6 +38,39 @@ export class AuthService {
     });
     
     await user.save();
+
+    // If user is a teacher, create teacher record
+    if (user.role === UserRole.TEACHER) {
+      const teacher = new this.teacherModel({
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        teacherId: `TCH${user._id.toString().slice(-6).toUpperCase()}`,
+        qualification: 'To be updated',
+        experience: 0,
+        phone: user.phone,
+        address: user.address,
+        isActive: true,
+      });
+      await teacher.save();
+    }
+
+    // If user is a student, create student record
+    if (user.role === UserRole.STUDENT) {
+      const student = new this.studentModel({
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        studentId: `STU${user._id.toString().slice(-6).toUpperCase()}`,
+        dateOfBirth: new Date(), // Should be provided in registration
+        gradeLevel: 'grade_1', // Should be provided in registration
+        // classId will be assigned later by admin
+        phone: user.phone,
+        address: user.address,
+        isActive: true,
+      });
+      await student.save();
+    }
     
     // Remove password from response
     const { password: _, ...userResponse } = user.toObject();

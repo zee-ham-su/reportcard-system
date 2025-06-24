@@ -33,6 +33,7 @@ export class MarksController {
   }
 
   @Get()
+  @Roles(UserRole.ADMIN, UserRole.TEACHER)
   @ApiOperation({ summary: 'Get all marks' })
   @ApiResponse({ status: 200, description: 'List of all marks' })
   async findAll() {
@@ -40,6 +41,7 @@ export class MarksController {
   }
 
   @Get('student/:studentId')
+  @Roles(UserRole.ADMIN, UserRole.TEACHER, UserRole.STUDENT)
   @ApiOperation({ summary: 'Get marks by student ID' })
   @ApiResponse({ status: 200, description: 'Student marks' })
   async findByStudent(@Param('studentId') studentId: string) {

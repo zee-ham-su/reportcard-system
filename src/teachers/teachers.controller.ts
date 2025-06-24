@@ -32,6 +32,7 @@ export class TeachersController {
   }
 
   @Get()
+  @Roles(UserRole.ADMIN, UserRole.TEACHER)
   @ApiOperation({ summary: 'Get all teachers' })
   @ApiResponse({ status: 200, description: 'List of all teachers' })
   async findAll() {
@@ -39,6 +40,7 @@ export class TeachersController {
   }
 
   @Get(':id')
+  @Roles(UserRole.ADMIN, UserRole.TEACHER)
   @ApiOperation({ summary: 'Get teacher by ID' })
   @ApiResponse({ status: 200, description: 'Teacher details' })
   @ApiResponse({ status: 404, description: 'Teacher not found' })

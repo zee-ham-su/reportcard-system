@@ -22,7 +22,7 @@ export class ReportsController {
   constructor(private readonly reportsService: ReportsService) {}
 
   @Get('student/:studentId/report-card')
-  @Roles(UserRole.ADMIN, UserRole.TEACHER)
+  @Roles(UserRole.ADMIN, UserRole.TEACHER, UserRole.STUDENT)
   @ApiOperation({ summary: 'Generate and download student report card PDF' })
   @ApiQuery({ name: 'term', enum: TermType })
   @ApiQuery({ name: 'academicYear', example: '2024-25' })

@@ -32,6 +32,7 @@ export class SubjectsController {
   }
 
   @Get()
+  @Roles(UserRole.ADMIN, UserRole.TEACHER)
   @ApiOperation({ summary: 'Get all subjects' })
   @ApiResponse({ status: 200, description: 'List of all subjects' })
   async findAll() {
@@ -39,6 +40,7 @@ export class SubjectsController {
   }
 
   @Get(':id')
+  @Roles(UserRole.ADMIN, UserRole.TEACHER)
   @ApiOperation({ summary: 'Get subject by ID' })
   @ApiResponse({ status: 200, description: 'Subject details' })
   @ApiResponse({ status: 404, description: 'Subject not found' })
